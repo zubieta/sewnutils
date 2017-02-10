@@ -51,7 +51,7 @@ function _colors_space {
 function _colors_help {
     echo "Show the colors supported by the terminal."
     echo
-    echo "Usage: $0 [-hlg]"
+    echo "Usage: colors [-hlg]"
     echo
     echo " -h  This help"
     echo " -l  Show a list of color names"
