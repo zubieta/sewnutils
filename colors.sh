@@ -32,6 +32,22 @@ function _color_grid {
     done
 }
 
+function _true_color_line {
+    awk 'BEGIN{
+    s="/\\/\\/\\/\\/\\"; s=s s s s s s s s s s s s s s s s s s s s s s s;
+    for (colnum = 0; colnum<256; colnum++) {
+        r = 255-(colnum*255/255);
+        g = (colnum*510/255);
+        b = (colnum*255/255);
+        if (g>255) g = 510-g;
+            printf "\033[48;2;%d;%d;%dm", r,g,b;
+            printf "\033[38;2;%d;%d;%dm", 255-r,255-g,255-b;
+            printf "%s\033[0m", substr(s,colnum+1,1);
+        }
+        printf "\n";
+    }'
+}
+
 function _colors_list {
     echo -e "\033[0mNC (No color)"
     echo -e "\033[1;37mWHITE\t\033[0;30mBLACK"
@@ -67,15 +83,16 @@ function _colors_space {
 function _colors_help {
     echo "Show the colors supported by the terminal."
     echo
-    echo "Usage: colors [-hlgp]"
+    echo "Usage: colors [-hlgtp]"
     echo
     echo " -h  This help"
     echo " -l  Show a list of color names"
     echo " -g  Show a grid of colors"
+    echo " -t  Show a true color line"
     echo " -p  Show a colored pacman"
 }
 
-args=`getopt hlgp $*`
+args=`getopt hlgtp $*`
 if [ $? != 0 ]
 then
     _colors_help
@@ -89,6 +106,7 @@ do
         -h) _colors_help; shift; break;;
         -l) _colors_list; shift; break;;
         -g) _color_grid; shift; break;;
+        -t) _true_color_line; shift; break;;
         -p) _color_pacman; shift; break;;
         --) _colors_space; shift; break;;
     esac
