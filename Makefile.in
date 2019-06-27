@@ -1,0 +1,12 @@
+scripts = $(wildcard scripts/*)
+
+all: install
+
+.PHONY: install
+install: $(scripts)
+	mkdir -p $(PREFIX)/bin
+	cp $^ $(PREFIX)/bin
+
+.PHONY: uninstall
+uninstall: $(scripts)
+	rm -f $(subst scripts/,$(PREFIX)/bin/,$^)

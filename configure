@@ -1,0 +1,25 @@
+#!/bin/sh
+
+prefix=/usr/local
+
+for arg in "$@"; do
+    case "$arg" in
+    --prefix=*)
+        prefix="$(echo "$arg" | sed 's/--prefix=//')"
+        ;;
+    --help | -h)
+        echo 'Usage: ./configure [options]'
+        echo
+        echo 'Options:'
+        echo '  --prefix=<path>: installation prefix [default=/usr/local]'
+        echo
+        echo 'All invalid options are silently ignored.'
+        exit 0
+        ;;
+    esac
+done
+
+echo "Generating Makefile"
+echo "PREFIX = $prefix" >Makefile
+cat Makefile.in >>Makefile
+echo "Configuration complete, type make to build."
