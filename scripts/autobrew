@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+
+FORCE=0
+OPTIND=1
+CONFIG=~/.autobrew_allowed
+AIRPORT="/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport"
+SSID=$("$AIRPORT" -I | grep -E '^[[:space:]]*SSID:' | awk '{print $2}')
+
+function __usage() {
+    echo "Update, install, upgrade and cleanup packages installed with brew"
+    echo "Usage: $0 [-h | --help] [-f | --force]"
+    echo "To allow only specific networks to run autobrew in, add each of their"
+    echo "names in a new line to the file ~/.autobrew_allowed"
+}
+
+function __autobrew() {
+    echo "UPDATING BREW"
+    brew update --verbose
+    echo "APPLYING BREW BUNDLE"
+    brew bundle --global --verbose
+    echo "UPGRADING REMAINING FORMULAS"
+    brew upgrade --verbose
+    echo "CLEANING UP"
+    brew cleanup --verbose
+}
+
+for arg in "$@"; do
+    shift
+    case "$arg" in
+    "--force") set -- "$@" "-f" ;;
+    "--help") set -- "$@" "-h" ;;
+    "--"*)
+        echo "$0 illegal option $arg"
+        __usage
+        exit 2
+        ;;
+    *) set -- "$@" "$arg" ;;
+    esac
+done
+
+while getopts "hf" opt; do
+    case "$opt" in
+    "f") FORCE=1 ;;
+    "h" | *)
+        __usage
+        exit 0
+        ;;
+    esac
+done
+
+PASS_PROMPT=$(mktemp) || exit 1
+trap "rm -rf ""$PASS_PROMPT" EXIT
+cat <<EOF >"$PASS_PROMPT"
+#!/usr/bin/env bash
+osascript -e 'Tell application "System Events" to display dialog "Sudo password required by brew cask:" with hidden answer default answer ""' -e 'text returned of result' 2>/dev/null
+EOF
+chmod 500 "$PASS_PROMPT" || exit 1
+export SUDO_ASKPASS="$PASS_PROMPT"
+
+if [ ! -f "$CONFIG" ]; then
+    echo "All Networks allowed."
+    __autobrew
+elif [ "$(grep -sc "$SSID" "$CONFIG")" -gt 0 ] || [ $FORCE -gt 0 ]; then
+    echo "Running on network $SSID."
+    __autobrew
+else
+    echo "Skipping autobrew on disallowed network."
+fi
