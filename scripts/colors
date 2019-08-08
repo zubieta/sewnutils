@@ -135,18 +135,19 @@ function _colors_space() {
 }
 
 function _colors_help() {
-    echo "Show the colors supported by the terminal."
+    echo "Show the color palette of the terminal in different forms."
     echo
-    echo "Usage: colors [-hlgtp]"
+    echo "Usage: colors [-hlgtps]"
     echo
     echo " -h  This help"
     echo " -l  Show a list of color names"
     echo " -g  Show a grid of colors"
     echo " -t  Show a true color line"
     echo " -p  Show a colored pacman"
+    echo " -s  Show a colored space invaders"
 }
 
-if ! args=$(getopt hlgtp "$*"); then
+if ! args=$(getopt hlgtps "$*"); then
     _colors_help
     exit 2
 fi
