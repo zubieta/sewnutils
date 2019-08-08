@@ -70,20 +70,19 @@ function _color_grid() {
 }
 
 function _true_color_line() {
-    # Source: https://gist.github.com/XVilka/8346728
-    awk 'BEGIN{
-    s="/\\/\\/\\/\\/\\"; s=s s s s s s s s s s s s s s s s s s s s s s s;
-    for (colnum = 0; colnum<256; colnum++) {
-        r = 255-(colnum*255/255);
-        g = (colnum*510/255);
-        b = (colnum*255/255);
-        if (g>255) g = 510-g;
-            printf "\033[48;2;%d;%d;%dm", r,g,b;
-            printf "\033[38;2;%d;%d;%dm", 255-r,255-g,255-b;
-            printf "%s\033[0m", substr(s,colnum+1,1);
-        }
-        printf "\n";
-    }'
+    # Based on: https://gist.github.com/XVilka/8346728
+    local blue red green arr=("/" "\\\\")
+    for blue in {0..255}; do
+        red=$((255 - blue))
+        green=$((blue * 2))
+        if [ $green -gt 255 ]; then
+            green=$((511 - green))
+        fi
+        echo -n -e "\033[48;2;${red};${green};${blue}m"
+        echo -n -e "\033[38;2;$((255 - red));$((255 - green));$((255 - blue))m"
+        echo -n -e "${arr[((blue % 2))]}\033[0m"
+    done
+    echo
 }
 
 function _colors_list() {
