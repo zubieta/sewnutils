@@ -12,7 +12,7 @@ autobrew — Easily maintain packages installed with _brew bundle_.
 up the packages defined in the user _~/.Brewfile_.
 
 It runs only on allowed networks if the _~/.autobrew_allowed_ file exists. The
-allowed networks are defined in such file by placin its **SSID** on a new line.
+allowed networks are defined in such file by placing its **SSID** on a new line.
 
 # OPTIONS
 
