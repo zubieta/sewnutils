@@ -1,12 +1,42 @@
-scripts = $(wildcard scripts/*)
+PACKAGE := sewnutils
+AUTHOR := Carlos Zubieta
+TAG := $(shell git describe --abbrev=0 --tags 2>/dev/null)
+DATE := $(shell date +%Y-%m-%d)
 
-all: install
+_SCRIPTSDIR := scripts
+_DOCSDIR := doc
+_MANDIR := man/man1
+SCRIPTS := $(wildcard $(_SCRIPTSDIR)/*)
+DOCS := $(wildcard $(_DOCSDIR)/*.md)
+MANPAGES := $(subst $(_DOCSDIR)/,$(_MANDIR)/,$(DOCS:.md=.1))
+
+all: $(MANPAGES)
+
+$(_MANDIR)/%.1: $(_DOCSDIR)/%.md
+	@mkdir -p $(_MANDIR)
+	@echo "% $(shell basename $(<:.md=) | tr '[a-z]' '[A-Z]')(1)\
+		$(PACKAGE) $(TAG) | $(PACKAGE)\n% $(AUTHOR)\n% $(DATE)\n" \
+		| cat - $< \
+		| pandoc --from markdown_github+pandoc_title_block --to man --standalone --output $@ -
+
+.PHONY: .install-scripts
+.install-scripts: $(SCRIPTS)
+	@mkdir -p $(PREFIX)/bin
+	@cp $^ $(PREFIX)/bin
+
+.PHONY: .install-manpages
+.install-manpages: $(MANPAGES)
+	@mkdir -p $(MANDIR)/man1
+	@cp $^ $(MANDIR)/man1
 
 .PHONY: install
-install: $(scripts)
-	mkdir -p $(PREFIX)/bin
-	cp $^ $(PREFIX)/bin
+install: .install-scripts .install-manpages
 
 .PHONY: uninstall
-uninstall: $(scripts)
-	rm -f $(subst scripts/,$(PREFIX)/bin/,$^)
+uninstall:
+	@rm -f $(subst $(_SCRIPTSDIR)/,$(PREFIX)/bin/,$(SCRIPTS))
+	@rm -f $(subst $(_MANDIR)/,$(MANDIR)/man1/,$(MANPAGES))
+
+.PHONY: clean
+clean:
+	@rm -r -f $(MANPAGES)
