@@ -97,12 +97,14 @@ complete -F _viscosity viscosity
         ;;
       zsh)
         printf "_viscosity () {
-        _arguments '1: :(help connect disconnect status list)' '2:: :->vpn'
-        case \$line[1] in
-                (connect | disconnect | status) local -a array
-                        array=(\${(f)\"\$(viscosity list)\"})
-                        compadd -a array ;;
-        esac
+    _arguments '1: :(help connect disconnect status list)' '2:: :->vpn'
+    case \$line[1] in
+        connect|disconnect|status)
+            local -a array
+            array=(\${(f)\"\$(viscosity list)\"})
+            compadd -a array
+            ;;
+    esac
 }
 compdef _viscosity viscosity
 "
