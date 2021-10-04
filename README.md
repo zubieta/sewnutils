@@ -7,12 +7,14 @@ my own ideas and code patches found on the Internet that I commonly use.
 
 -   **autobrew** - Easily maintain packages installed with _brew bundle_.
 -   **colors** - Show the color palette of your terminal multiple ways.
+-   **viscosity** - Connect/disconnect to VPNs from the command line.
 
 ## DEPENDENCIES
 
 -   **bash**
 -   **grep**
 -   **brew**
+-   **Viscosity.app**
 
 #### BUILD TIME DEPENDENCIES
 
