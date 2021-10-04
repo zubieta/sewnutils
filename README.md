@@ -34,9 +34,9 @@ brew install zubieta/tap/sewnutils
 Or they can be installed from source:
 
 ```bash
-wget https://github.com/zubieta/sewnutils/archive/v0.2.tar.gz -O sewnutils-v0.2.tar.gz
-tar xfz sewnutils-v0.2.tar.gz
-cd sewnutils-0.2
+wget https://github.com/zubieta/sewnutils/archive/v0.3.tar.gz -O sewnutils-v0.3.tar.gz
+tar xfz sewnutils-v0.3.tar.gz
+cd sewnutils-0.3
 ./configure --prefix=/usr/local
 make
 make install
